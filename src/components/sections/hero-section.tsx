@@ -35,11 +35,11 @@ export function HeroSection() {
         </ul>
 
         <div className="hero__actions">
-          <a className="button button--primary" href="#engineering-focus">
-            Explore my focus <span aria-hidden="true">↓</span>
+          <a className="button button--primary" href="#projects">
+            Explore selected projects <span aria-hidden="true">↓</span>
           </a>
-          <a className="button button--quiet" href="#site-navigation">
-            Browse navigation <span aria-hidden="true">↗</span>
+          <a className="button button--quiet" href="#about">
+            About my approach <span aria-hidden="true">↗</span>
           </a>
         </div>
       </div>

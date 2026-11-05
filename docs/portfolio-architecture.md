@@ -1,11 +1,11 @@
 # Biniyam Samuel Yaya — Portfolio Architecture and Implementation Plan
 
-**Status:** Architecture approved; Phase 1 implemented and validated  
-**Scope:** Phase 1 foundation and hero only. Projects, About, experience, certifications, education, skills sections, and contact functionality are deferred.
+**Status:** Phases 1–4 implemented and validated  
+**Scope:** Hero, About, skills, project showcase, typed content, production metadata, branding, and responsive/accessibility foundations. Experience, education display, certifications, and contact functionality remain deferred.
 
 ## 1. Repository assessment
 
-The repository is a minimal Next.js App Router starter, not an existing portfolio. The application entry points are `src/app/page.tsx`, `src/app/layout.tsx`, and `src/app/globals.css`. The home page still contains create-next-app sample content; the layout uses Geist and Geist Mono via `next/font/google` and starter metadata. Global styles import Tailwind CSS 4. TypeScript is strict and provides `@/*` mapped to `src/*`. The package manifest pins Next.js 16.4.5 and React/React DOM 19.3.0; TypeScript, ESLint, and Tailwind 4 are already present. No additional runtime UI, animation, or content dependencies are declared. `next.config.ts` contains existing cache/partial-prefetch and Turbopack settings; preserve them unless later implementation reveals a concrete compatibility issue. `public/` only contains starter SVGs. No `AGENTS.md` instructions or `docs/` directory were found during inspection.
+The repository uses the Next.js App Router under `src/app`, Tailwind CSS 4, strict TypeScript, and the `@/*` alias. The package manifest pins Next.js 16.4.5 and React/React DOM 19.3.0; these remain unchanged. The page is composed from Server Components and typed local data. The dark design tokens and system font stacks live in `src/app/globals.css`; no UI or animation dependencies are used. `next.config.ts` retains its existing cache/partial-prefetch and Turbopack settings. Portfolio data is separated across profile, skills, projects, experience, education, and certification modules.
 
 The approved direction is a premium, dark engineering portfolio with balanced software and hardware emphasis, delivered as a single page at `/`. It does not assume a backend, CMS, authentication, analytics, or contact-form service. Avoid adding dependencies until a specific requirement cannot be met well with platform and React primitives.
 
@@ -54,7 +54,7 @@ Use client components only where interaction requires browser state: mobile navi
 
 ### Data flow
 
-`src/data/portfolio.ts` (typed, manually curated source of truth) → server-rendered section components → small client navigation/dialog components. No fetch layer is needed for static v1. Keep uncertain content absent or explicitly marked draft in authoring notes, never as public content. Add URLs only after they are confirmed and validated.
+Separated typed modules under `src/data/` (manually curated source of truth) → server-rendered section components. No fetch layer or client-side state is needed for the static portfolio. Keep uncertain content absent or clearly marked for review. Add URLs only after they are confirmed and validated.
 
 ### Architectural decisions
 
@@ -73,15 +73,14 @@ RootLayout (src/app/layout.tsx)
     ├── SkipLink
     ├── SiteHeader (Server Component)
     │   ├── BrandLink
-    │   ├── DesktopNavigation
-    │   └── MobileNavigation (Client Component, if needed)
+    │   └── ResponsiveNavigation (CSS responsive layout)
     ├── main
     │   ├── HeroSection
     │   ├── AboutSection
     │   ├── SkillsSection
     │   ├── ProjectsSection
     │   │   ├── ProjectCard (Server Component)
-    │   │   └── ProjectDetailsDialog (Client Component; only if approved interaction needs it)
+    │   │   └── ProjectDetails (native `<details>` disclosure)
     │   ├── ExperienceSection
     │   ├── EducationSection
     │   ├── CertificationsSection
@@ -116,7 +115,6 @@ src/
       contact-section.tsx
     projects/
       project-card.tsx
-      project-details-dialog.tsx # Client only if native dialog interaction is used
     ui/
       section-heading.tsx
       status-badge.tsx
@@ -200,19 +198,22 @@ Every future project record may be assigned one or more of these approved catego
 3. Embedded Systems & IoT
 4. Robotics & Drone Technology
 5. Networking & Infrastructure
+6. Networking / AI (project-specific classification used for AI Network Guardian; the skill taxonomy remains the original five groups)
 
-### Initial project record plan
+### Current project records
 
-Create one record for each named project, but populate narrative, role, status, tools, dates, and links only after confirmation:
+The current public project data includes the following records. Preserve only the supplied or repository-verified claims; keep personal role, dates, outcomes, and media flagged for review where not confirmed.
 
 | Project | Safe initial editorial treatment |
 | --- | --- |
-| RentVision | AI-powered rental discovery platform; no claims about model, deployment, users, or results until confirmed. |
+| [Internship Linkage Management System](https://github.com/binicode-ai/internship-linkage-management-system) | README/source confirm a web system for students, universities, and companies, with portals, internship posting, application tracking, evaluation, and complaint/communication flows. Listed stack: Node.js, Express.js, PostgreSQL, EJS, JavaScript, CSS3. |
+| [AI Network Guardian](https://github.com/binicode-ai/ai-network-guardian) | Source confirms ping/DNS telemetry collection, PostgreSQL storage, FastAPI endpoints, a React/Vite/Recharts dashboard, and threshold-based alert rules. Dependencies include FastAPI, psycopg, python-dotenv, Uvicorn, React, Vite, and Recharts. No AI/ML model or AI/ML dependency was found in inspected source/dependency files; do not claim AI-driven detection. |
 | Inter-Networking of Multiple Institutions | Preserve supplied title; clarify scope, topology, role, and implementation before describing results. |
-| Short-Range FM Transmitter and Receiver | Preserve supplied title; confirm whether completed and its circuit/design details. |
 | Harvard Architecture Mini Computer | Preserve supplied title; confirm implementation, instruction set, tools, and status. |
 | Four-Way Traffic Light Controller | Preserve supplied title; confirm hardware/simulation, controller behavior, and completion. |
 | Agricultural Quadcopter Drone research | Label as research/ongoing only if confirmed; otherwise show the supplied research framing and ask for current status. |
+
+The source review found the Internship Linkage README feature/technology lists alongside corresponding Express routes, EJS views, and PostgreSQL schema. The AI Network Guardian repository contains collector, alerting, storage, API, dashboard, and tests modules. Its only test file is a database initialization smoke script; no feature or alert-rule test suite was found. No deployment state or measured results are asserted.
 
 The profile supplied for this plan supports describing areas of study and interest. It does not identify particular programming languages, PCB tools, cloud providers, institutions, internships, certificates, dates, or quantified achievements.
 
@@ -234,27 +235,36 @@ Add typed portfolio data and section components in the requested order. Add veri
 
 Add responsive navigation and project details interaction, restrained hero/card motion, responsive layout, supplied media, and error-free empty/optional states. Respect reduced motion and keyboard interaction.
 
-### Phase 4 — Metadata and release readiness
+### Phase 4 — Metadata and release readiness (implemented)
 
-Complete metadata, social preview/canonical URL once known, favicon/brand assets, image sizing, and final content review. Check target deployment environment and configured build behavior before publishing.
+Configured title/description, canonical URL, Open Graph and X metadata, a generated branded 1200×630 preview image, SVG monogram favicon, `robots.txt`, and `sitemap.xml`. The page has no project photography or client-side image loading. The existing configuration was preserved; Next's production output still notes its configured `agentFeedback` experiment.
 
-Architecture approval has been granted. The current implementation authorization is limited to Phase 1. Do not begin Phase 2 until separately approved.
+Architecture approval has been granted. Phases 1–4 are implemented. Wait for approval before any further implementation.
 
 ### Phase 1 implementation boundary
 
-Phase 1 implements global design tokens/CSS foundation, root metadata, responsive site header/navigation, skip link, professional responsive hero, semantic page structure, and accessibility/reduced-motion support. The hero identity is “Biniyam Samuel Yaya”, “Computer Engineer | Full-Stack Developer”, and “Software Engineering | PCB Design | Embedded Systems | Robotics | IoT”. No projects, About section, experience, certifications, education/skills sections, contact functionality, fabricated metrics, contact details, or project claims are included in this phase.
+Phase 1 implemented global design tokens/CSS foundation, root metadata, responsive site header/navigation, skip link, professional responsive hero, semantic page structure, and accessibility/reduced-motion support. The hero identity is “Biniyam Samuel Yaya”, “Computer Engineer | Full-Stack Developer”, and “Software Engineering | PCB Design | Embedded Systems | Robotics | IoT”.
+
+### Phase 2 implementation boundary and result
+
+
+Phase 2 adds About, skills focus groups, project cards with native accessible details disclosures, and separated typed profile/skills/projects/experience/education/certification data modules. Skills distinguish professional focus from interests. Experience and certification arrays are empty because no entries were provided. Education data includes only the supplied program and specialization; institution and dates remain absent.
+
+### Phase 3 implementation boundary and result
+
+Phase 3 removes the RentVision and short-range FM project records from the public portfolio data and replaces them with the repository-verified Internship Linkage Management System and AI Network Guardian records, each linking directly to GitHub. AI Network Guardian's card documents that inspected source implements threshold-based alerts and that no AI/ML model or dependency was found. The remaining four supplied projects are preserved. The project grid, card hierarchy, responsive navigation, detail disclosures, focus/active/hover states, and section transitions were refined with CSS; native disclosures and Server Components remain in use. No dependencies or Next.js configuration were changed.
 
 ## 9. Testing and quality strategy
 
-No tests or commands were run as part of this planning task. During implementation, validate in layers without adding a test framework unless needed:
+During implementation, validate in layers without adding a test framework unless needed:
 
 - **Static checks:** run the existing ESLint script and TypeScript/Next build checks after implementation; fix warnings that reflect real defects.
 - **Responsive review:** inspect representative narrow mobile, tablet, and desktop widths; verify no overflow, clipped controls, or unreadably dense project cards.
-- **Accessibility review:** keyboard-only path through nav, cards, dialog and close; visible focus; heading/landmark hierarchy; accessible names; Escape behavior; reduced-motion mode; contrast; 200% zoom and reflow. Use automated axe checks if an existing tool or approved workflow is available; otherwise do not add a dependency solely for this plan.
+- **Accessibility review:** keyboard-only path through navigation, native disclosure summaries, and repository links; visible focus; heading/landmark hierarchy; accessible names; reduced-motion mode; contrast; 200% zoom and reflow. Use automated axe checks if an existing tool or approved workflow is available; otherwise do not add a dependency solely for this plan.
 - **SEO/content:** inspect rendered title/description, social metadata, canonical link when configured, heading structure, crawlable content, link destinations, and image alt text. Ensure no placeholder or invented claims ship.
-- **Browser behavior:** verify anchor navigation, mobile menu state, dialog focus entry/containment/restoration, Escape dismissal, and operation with JavaScript disabled where practical (core reading/navigation should still be available).
+- **Browser behavior:** verify anchor navigation, responsive navigation layout, native disclosure keyboard operation, external repository links, and operation with JavaScript disabled (core reading/navigation should remain available).
 - **Performance:** inspect production build output and browser network/runtime behavior; keep client JS limited to interactive islands and optimize supplied media.
-- **Regression:** ensure the existing project build/config remains intact and all eight requested content areas are represented or intentionally omitted based on verified information.
+- **Regression:** ensure the existing project build/config remains intact, obsolete project records are absent, the four retained projects remain, and Phase 3 does not introduce client-only UI or unsupported claims.
 
 ## 10. Open content decisions
 
@@ -269,4 +279,4 @@ These do not block architectural approval, but need resolution before the relate
 
 ## 11. Approval checkpoint
 
-This document records the approved architecture and Phase 1 boundary. Phase 1 is implemented and validated with the existing lint and production build scripts; no package or Next.js configuration changes were made. Stop for approval before Phase 2.
+Phases 1–4 are implemented and validated with the existing lint and production build scripts; package versions and `next.config.ts` were not changed. The generated HTML was checked for canonical, Open Graph, X card, and icon metadata. The page contains no client components or project image requests. Keyboard paths, heading levels, reduced-motion CSS, responsive breakpoints, and primary text contrast were reviewed from source; no browser screenshot tool was available for viewport-based visual inspection. A first-party source/config scan found no secret-like values or local `.env` files. Wait for approval before further implementation.

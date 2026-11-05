@@ -1,6 +1,8 @@
 const navigationLinks = [
   { href: "#home", label: "Home" },
-  { href: "#engineering-focus", label: "Engineering focus" },
+  { href: "#about", label: "About" },
+  { href: "#skills", label: "Focus" },
+  { href: "#projects", label: "Projects" },
 ];
 
 export function SiteHeader() {
